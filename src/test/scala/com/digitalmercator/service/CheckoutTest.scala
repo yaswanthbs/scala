@@ -29,6 +29,36 @@ class CheckoutTest extends AnyFlatSpec with Matchers {
     checkout.scan(Product("Orange", 0.25))
     checkout.scan(Product("Apple", 0.60))
 
-    checkout.total shouldEqual 2.05
+    checkout.total shouldEqual 1.45
   }
+
+  "A Checkout" should "apply BOGOF on apples correctly" in {
+    val checkout = new Checkout
+
+    checkout.scan(Product("Apple", 0.60))
+    checkout.scan(Product("Apple", 0.60))
+    checkout.total shouldEqual 0.60 // Buy 1 get 1 free
+  }
+
+  it should "apply 3 for 2 offer on oranges correctly" in {
+    val checkout = new Checkout
+
+    checkout.scan(Product("Orange", 0.25))
+    checkout.scan(Product("Orange", 0.25))
+    checkout.scan(Product("Orange", 0.25))
+    checkout.total shouldEqual 0.50 // 3 for the price of 2
+  }
+
+  it should "combine both offers correctly" in {
+    val checkout = new Checkout
+
+    checkout.scan(Product("Apple", 0.60))
+    checkout.scan(Product("Apple", 0.60)) // 1 apple paid for
+    checkout.scan(Product("Orange", 0.25))
+    checkout.scan(Product("Orange", 0.25))
+    checkout.scan(Product("Orange", 0.25)) // 3 oranges total
+
+    checkout.total shouldEqual 1.10 // 0.60 (apples) + 1.50 (oranges)
+  }
+
 }

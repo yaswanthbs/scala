@@ -11,7 +11,15 @@ class Checkout {
   }
 
   def total: Double = {
-    products.map(_.price).sum
+    val groupedItems = products.groupBy(_.name).mapValues(_.size)
+
+    val appleCount = groupedItems.get("Apple").getOrElse(0)
+    val orangeCount = groupedItems.get("Orange").getOrElse(0)
+
+    val appleTotal = (appleCount / 2) * 0.60 + (appleCount % 2) * 0.60 // BOGOF offer on apples
+    val orangeTotal = (orangeCount / 3) * 2 * 0.25 + (orangeCount % 3) * 0.25 // 3 for 2 on oranges
+
+    appleTotal + orangeTotal
   }
 
   def clear(): Unit = {
